@@ -53,9 +53,26 @@ class Amplitude:
         else:
             self.stdev = 0                
     
-    # A plotting function
-    def plot(self, ax, label_choice, color_choice):
+    # A plotting function for amplitude profile
+    # Use non-dimensionalized amplitude ak or not?
+    def plot_amplitude(self, ax, label_choice = None, color_choice = None):
         ax.plot(self._eta_data.x, self._eta_data.eta, label = label_choice, color = color_choice)
+        ax.set_xlabel('x position')
+        ax.set_ylabel('amplitude')
+    
+    #A plotting function for the spectrum
+    def plot_spectrum(self, ax, cutoff = 8, label_choice = None, color_choice = None):
+        # Plot the magnitude of wave spectrum
+        '''
+        cutoff: integer, optional
+            Cut off the plotting at the nth wavenumber since higher frequency 
+            contains no energy. Default is 8.
+        '''
+        ax.plot(self.spectrum[0][0:cutoff], abs(self.spectrum[1])[0:cutoff], 
+            label = label_choice, color = color_choice)
+        ax.set_xlabel('wavenumber')
+        ax.set_ylabel('|Y(Wavenumber)|')
+
         
     def phase(self):
         phase = 0
@@ -63,31 +80,34 @@ class Amplitude:
         There is a uniquely determined phase for a given amplitude profile
         '''
 
-    def spectrum(self, direction, base, clearance, header):
+    def FFT(self, domain = None, Fs = 2048):
+        '''
+        domain_width: tuple, optional
+            A tuple with two component, starting point and end point. 
+            If not specified, take the extrema of self._eta_data.x
+        Fs: integer, optional
+            Sampling rate. Power of 2. 
+        
+        Reference: https://www.ritchievink.com/blog/2017/04/23/understanding-the-fourier-transform-by-example/
+        
+        '''
+        if domain is None:
+            domain = (self._eta_data.x.min(), self._eta_data.x.max())
+        Xs = 1./Fs; # sampling interval
+        x = np.arange(domain[0], domain[1], Xs) # space vector
+        y = np.interp(x, self._eta_data.x, self._eta_data.eta)
+        # In frequency domain, the highest is sampling frequency Fs, the 
+        # resolution is determined by sample size: \deltaf = fs/N
 
-            Fs = 2048;  # sampling rate
-            Ts = 1.0/Fs; # sampling interval
-            x = np.arange(-0.5,0.5,Ts) # space vector
+        N = len(y) # sample size, may not be Fs depending on domain size
+        wavenumber = np.linspace(0, Fs, N) 
+        # An alternative way
+        # k = np.arange(n)
+        # T = n/Fs
+        # wavenumber = k/T 
+        wavenumber = wavenumber[0:int(N/2)] # one side frequency range
+        Y = np.fft.fft(y)/N # fft computing and normalization
+        Y = Y[0:int(N/2)]
+        self.spectrum = (wavenumber, Y)
 
-            y = np.interp(x, interface.x, interface.pos)
-            n = len(y) # length of the signal
-            k = np.arange(n)
-            T = n/Fs
-            frq = k/T # two sides frequency range
-            frq = frq[0:int(n/256)] # one side frequency range
-            Y = np.fft.fft(y)/n # fft computing and normalization
-            Y = Y[0:int(n/256)]
 
-            ax[0].plot(x, y*2*3.14, label = 't = %.0f' %i, color=plt.cm.get_cmap('summer')(color_idx[(i-start)//M]))
-
-    #         t_smooth = t[0::20]
-    #         y_smooth = spline(t, y, t_smooth)
-    #         ax[0].plot(t_smooth, y_smooth, label = 't = %.0f' %(i/100), color=plt.cm.get_cmap('summer')(color_idx[i]))
-            ax[0].set_xlabel('Time')
-            ax[0].set_ylabel('Amplitude')
-            ax[0].legend()
-            ax[1].plot(frq, abs(Y), label = 't = %.0f' %i, color=plt.cm.get_cmap('summer')(color_idx[(i-start)//M])) # plotting the spectrum
-            ax[1].set_xlabel('Wavenumber')
-            ax[1].set_ylabel('|Y(Wavenumber)|')
-            ax[1].legend()
-            fig.show()

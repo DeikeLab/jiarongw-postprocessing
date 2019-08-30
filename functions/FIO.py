@@ -9,7 +9,7 @@ def readin(filename, table_delimiter = ',', table_headers = None):
     A function used to read in field contained data file in the form of 
     dataframe. Some helpful features are:
     1. Check if the file is damaged
-    2. drop NAN
+    2. avoid corrupted lines by forcing converting to numeric and drop NAN
     
     filename: string
         The name of the data file. (Not supposed to be iterative. Iterating is performed by a 
@@ -31,9 +31,12 @@ def readin(filename, table_delimiter = ',', table_headers = None):
 
     exists = os.path.exists(filename)
     if not exists:
-        print(filename + 'cannot be read!')        
+        print(filename + ' cannot be read!')        
     if exists:
-        data = pd.read_table(filename, delimiter = table_delimiter, names = table_headers)
+        data = pd.read_table(filename, delimiter = table_delimiter, names = table_headers, error_bad_lines=False)
+        columns = list(data) 
+        for i in columns: 
+            data[i] = pd.to_numeric(data[i],errors='coerce')
         data = data.dropna()
         data = data.reset_index(drop=True)
         return data
