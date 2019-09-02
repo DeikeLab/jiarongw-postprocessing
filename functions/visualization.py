@@ -41,12 +41,25 @@ def contour(field, target, axes, fieldmin = None, fieldmax = None):
     grid_x, grid_y = np.mgrid[-0.5:0.5:100j, -0.5:0.5:100j]
     grid_target = griddata((field.x, field.y), field[target], (grid_x, grid_y), method='cubic')
     # If max and min are nor specified, use field max and min
+    # Notice that in griddata document: 
+    # 'nearest' always puts the nearest value to a certain coordinate. But 'linear' and 'cubic' do not extrapolate 
+    # but fill the values which are not within the input area with nan by default.
+    # And nan propagates with np.amax, therefore nanmax needs to be used instead of amax
     if fieldmin is None:
-        fieldmin = grid_target.min()
+        fieldmin = np.nanmin(grid_target)
     if fieldmax is None:
-        fieldmax = grid_target.max()
+        fieldmax = np.nanmax(grid_target)
     img = axes.imshow(grid_target.T, extent=(-0.5,0.5,-0.5,0.5), vmin=fieldmin, vmax=fieldmax, cmap='RdBu', origin='lower')
     colorbar(img)
+
+    
+def series(grid, ):
+    '''
+    grid: tuple
+        ncols = grid[1], nrows = grid[0]
+    '''
+    fig, ax = plt.subplots(ncols=grid[1], nrows=grid[0], figsize = [20, 40]) 
+    
 
 # A animation function that put different cases side by side in comparison
 def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, interval_time = 100):

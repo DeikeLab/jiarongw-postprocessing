@@ -3,6 +3,7 @@
 '''
 import os
 import pandas as pd
+import numpy as np
 
 def readin(filename, table_delimiter = ',', table_headers = None):
     '''

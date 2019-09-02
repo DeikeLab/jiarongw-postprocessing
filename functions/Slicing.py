@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 ###############################################################################
 '''
 
-class C:
+class SlicingInterp:
     '''
     Class for slicing of a bulk data. Takes in a field.
     '''
@@ -58,7 +58,7 @@ class C:
         return field_2D
     
 
-    def average(self, direction, base, clearance, header):
+    def average(self, direction, base, clearance = 1e-8, header = None):
         '''
         For average a quantity across the plan, e.g. velocity.
 
@@ -70,7 +70,7 @@ class C:
             determines the plane. (Currently only able to do ones aligned with
             the coordinate.)
 
-        clearance : float, optional, default 1e-3
+        clearance : float, optional, default 1e-8
             Tolerance as criteria to include points that are close enough to 
             the designated plane.    	
 
@@ -81,8 +81,10 @@ class C:
         '''
         a = self._field_data[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))][header]
         aver = np.average(a)
+        # fluctuation amplitude
+        fluc = np.std(a)**2
         number = len(a)
-        return (aver,number)
+        return (aver,fluc,number)
         # def func2():
 
         # '''
