@@ -21,25 +21,30 @@ def colorbar(mappable):
     return fig.colorbar(mappable, cax=cax)
 
 # Contour plot function
-def contour(field, target, axes, fieldmin = None, fieldmax = None):
+def contour(field, target, axes, fieldmin = None, fieldmax = None, domain = [-0.5,0.5,-0.5,0.5], coord = ['x','y'], coordshow = False):
     '''
     A function that interpolate a group of points on a certain plane to a x-y grid and then display
     contour of desired field on the fed in figure axes.
-    Colormap used is RdBu. The extent of the plot is [-1, 1] with 100 points in each direction.
+    Colormap used is RdBu. 100 points in each direction.
     
     field: dataframe
         Dataframe where relevant fields are contained. Necessary fields are x and y coordinate.
     target: string
         Key of the field that needs to be plotted
-    figure:
+    axes:
         The handle of the instantiated figure axes.
-    vmin, vmax: float, optional
+    fieldmin, fieldmax: float, optional
         The minimum and maximum of color displayed. Defaults are the extrema of the field
-    '''
+    Domain: list of xmin, xmax, ymin, ymax, optional
+        The range of actual domain. Default is [-0.5, 0.5] times [-0.5, 0.5].
+    coord: list of keys, optional
+        The coordinate of the contour plane, default is x,y
+    coordshow: boolean, optional
+        Whether to show the coordinate, default is hide.  
+    '''    
     
-    points = np.array([field.x, field.y])
-    grid_x, grid_y = np.mgrid[-0.5:0.5:100j, -0.5:0.5:100j]
-    grid_target = griddata((field.x, field.y), field[target], (grid_x, grid_y), method='cubic')
+    grid_x, grid_y = np.mgrid[domain[0]:domain[1]:100j, domain[2]:domain[3]:100j]
+    grid_target = griddata((field[coord[0]], field[coord[1]]), field[target], (grid_x, grid_y), method='cubic')
     # If max and min are nor specified, use field max and min
     # Notice that in griddata document: 
     # 'nearest' always puts the nearest value to a certain coordinate. But 'linear' and 'cubic' do not extrapolate 
@@ -49,8 +54,26 @@ def contour(field, target, axes, fieldmin = None, fieldmax = None):
         fieldmin = np.nanmin(grid_target)
     if fieldmax is None:
         fieldmax = np.nanmax(grid_target)
-    img = axes.imshow(grid_target.T, extent=(-0.5,0.5,-0.5,0.5), vmin=fieldmin, vmax=fieldmax, cmap='RdBu', origin='lower')
+    img = axes.imshow(grid_target.T, extent=(domain[0],domain[1],domain[2],domain[3]), 
+                      vmin=fieldmin, vmax=fieldmax, cmap='RdBu', origin='lower')
     colorbar(img)
+    # Show coordinate if necessary
+    if coordshow:
+        axes.set_xlabel(coord[0])
+        axes.set_ylabel(coord[1])
+
+def scatter(field, target, axes, fieldmin = None, fieldmax = None, domain = [-0.5,0.5,-0.5,0.5], 
+            coord = ['x','y'], coordshow = False, area = 100):
+    '''
+    Input same with contour with additional:
+    area: float, optional
+        Area of the dot
+    '''
+    # color based on value
+    axes.scatter(field[coord[0]], field[coord[1]], s=area, c=field[target])
+    if coordshow:
+        axes.set_xlabel(coord[0])
+        axes.set_ylabel(coord[1])
 
     
 def series(grid, ):

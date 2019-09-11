@@ -7,9 +7,12 @@ Created on Thu Apr  4 09:57:14 2019
 import numpy as np
 import scipy.interpolate
 import os
-from tqdm import tqdm
 import pickle
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('/home/jiarong/research/postprocessing/functions/')
+from visualization import contour, scatter
+
 
 '''
 ###############################################################################
@@ -17,12 +20,12 @@ import matplotlib.pyplot as plt
 ###############################################################################
 '''
 
-class SlicingInterp:
+class Slicing:
     '''
     Class for slicing of a bulk data. Takes in a field.
     '''
     
-    def __init__(self, field_data, dimension, axis_handle = None):
+    def __init__(self, field_data, dimension):
         '''
         Parameters
         ----------
@@ -34,14 +37,11 @@ class SlicingInterp:
 		
 		dimension : integer, either 2 or 3
 			A "macro" that of either 2D or 3D.
-        
-        axis_handle : handle 
-            Handle to the plot for visualization.        
+             
         '''     
-
-        self._axis = axis_handle
+        
         self._dimension = dimension
-        self._field_data = field_data
+        self._field_data = field_data.copy() # Making a copy so that only the value is passed
         if self._dimension == 2:
         	self._pos = field_data[["x", "y"]]
         else:
@@ -58,7 +58,8 @@ class SlicingInterp:
         return field_2D
     
 
-    def average(self, direction, base, clearance = 1e-8, header = None):
+    
+    def statistics(self, direction, base, clearance = 1e-8, header = None):
         '''
         For average a quantity across the plan, e.g. velocity.
 
@@ -85,14 +86,36 @@ class SlicingInterp:
         fluc = np.std(a)**2
         number = len(a)
         return (aver,fluc,number)
-        # def func2():
 
-        # '''
-        # Define different drawing and plotting functions. More can be added later.
-        # '''
+    def plot_fluctuation(self, ax, direction, base, clearance = 1e-8, header = None, plotscatter = True, dotsize = 50):
+        '''
+        ax: handle
+        plotscatter: boolean, optional
+            Whether to plot scatter or contour. Default is scatter.
+        dotsize: float, optional
+            Size of scatter dots
+        '''
+            
+        field_slice = self._field_data[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))]
+        aver = np.average(field_slice[header])
+        # Subtract the average
+        target = field_slice.copy()
+        field_slice[header] = field_slice[header] - np.ones(len(field_slice))*aver
+        # Set the plotting coordinate
+        coord_slice = ['x', 'y', 'z']
+        coord_slice.remove(direction)
+        if not plotscatter:
+            contour(field_slice, header, ax, coord=coord_slice, coordshow=True)
+        else:
+            scatter(field_slice, header, ax, coord=coord_slice, coordshow=True, area=dotsize)
+        
 
-        # def drawing1():
-
-        # 	return line1 # return the line so that the legend can be specified
-
-        # def drawing2():
+# Functions that deals with multiple slicing
+        
+    def get_grid_set(self, direction):
+        '''
+        Get the grid point in a given direction, with extra restraints (e.g. greater than zero).
+        For example for inhomogeneous boundary flow, the most interesting direction is normal to the wall. 
+        '''
+        sample = self._field_data.drop_duplicates(direction)
+        self.grid_set = sample.loc[sample[direction] > 0][direction]
