@@ -59,7 +59,7 @@ class Slicing:
     
 
     
-    def statistics(self, direction, base, clearance = 1e-8, header = None):
+    def statistics(self, direction, base, clearance = 1e-8, header = None, stripping = False, strip_range = None):
         '''
         For average a quantity across the plan, e.g. velocity.
 
@@ -77,37 +77,60 @@ class Slicing:
 
         header : a list of keys or a single key
             The desired field to perform the average.
+            
+        stripping : boolean, optional, default no padding
+            If to remove the impact of finite domain by only considering points away from the boundary.
+            
+        strip_range: list of list 
+            Specify the range in the two directions other than the one specified by direction. 
+            In the order of [[min1, max1],[min2, max2]].
 
         Return the averaged single value.
         '''
-        a = self._field_data[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))][header]
+        a = self._field_data[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))]
+        # Strip the rim in the other two directions 
+        coordinate = ['x', 'y', 'z']
+        coordinate.remove(direction)
+        if stripping:
+            for (coord,scope) in zip(coordinate,strip_range):
+                a = a.loc[(a[coord]>scope[0])&(a[coord]<scope[1])]
+        a = a[header]
         aver = np.average(a)
         # fluctuation amplitude
         fluc = np.std(a)**2
         number = len(a)
         return (aver,fluc,number)
 
-    def plot_fluctuation(self, ax, direction, base, clearance = 1e-8, header = None, plotscatter = True, dotsize = 50):
+    def slice_plot(self, ax, direction, base, clearance = 1e-8, header = None, slice_domain = [-1, 1, -1, 1],
+                   fluc = False, fixedrange = [None, None], plotscatter = True, dotsize = 50):
         '''
         ax: handle
+        slice_domain: domain of the slice
+        fluc: boolean, optional 
+            Default plot real value, if True, subtract the average
+        fixedrange: list of [min, max], optional 
+            Default is None, which tells contour function to use the field max and min
+            If specified, used fixed color bar
         plotscatter: boolean, optional
             Whether to plot scatter or contour. Default is scatter.
         dotsize: float, optional
             Size of scatter dots
         '''
             
-        field_slice = self._field_data[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))]
-        aver = np.average(field_slice[header])
+        field_slice = self._field_data.loc[(self._field_data[direction]>(base-clearance))&(self._field_data[direction]<(base+clearance))]
+        aver = np.average(field_slice.loc[:,header])
         # Subtract the average
-        target = field_slice.copy()
-        field_slice[header] = field_slice[header] - np.ones(len(field_slice))*aver
+        if fluc:
+            field_slice.loc[:,header] = field_slice.loc[:,header] - np.ones(len(field_slice))*aver
         # Set the plotting coordinate
         coord_slice = ['x', 'y', 'z']
         coord_slice.remove(direction)
         if not plotscatter:
-            contour(field_slice, header, ax, coord=coord_slice, coordshow=True)
+            contour(field_slice, header, ax, domain = slice_domain, fieldmin = fixedrange[0], fieldmax = fixedrange[1], 
+                    coord=coord_slice, coordshow=True)
         else:
-            scatter(field_slice, header, ax, coord=coord_slice, coordshow=True, area=dotsize)
+            scatter(field_slice, header, ax, domain = slice_domain, fieldmin = fixedrange[0], fieldmax = fixedrange[1], 
+                    coord=coord_slice, coordshow=True, area=dotsize)
         
 
 # Functions that deals with multiple slicing

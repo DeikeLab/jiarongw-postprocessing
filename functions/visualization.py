@@ -76,7 +76,7 @@ def scatter(field, target, axes, fieldmin = None, fieldmax = None, domain = [-0.
         axes.set_ylabel(coord[1])
 
     
-def series(grid, ):
+def series(grid):
     '''
     grid: tuple
         ncols = grid[1], nrows = grid[0]

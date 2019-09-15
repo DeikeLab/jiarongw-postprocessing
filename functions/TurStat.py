@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import scipy.interpolate
 import os
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 import sys
 
@@ -61,7 +62,32 @@ class TurStat:
             # WATCHOUT if an operation takes inplace or not!
             self.field_add = self.field_add.add(self.fieldset[i])
 #             self.field_en_aver += self.fieldset[i]   # same effect
-        self.field_en_aver = self.field_add/self.N            
+        self.field_en_aver = self.field_add/self.N 
+    
+    def ensemble_aver_quantity(self, formula, type_ = 'scalar'):
+        '''
+        Take a measure in fieldset. Pass it to a function. Get the operation done (by a separate function that 
+        this function has nothing to do with). Return a quantity. Iterate and average through fieldset. Assemble 
+        that quantity along desirable axis, usually normal to the wall.
+        
+        formula: function
+            The function to compute a certain quantity.
+        type_: string
+            Either 'scalar' or 'array in y'
+        '''
+        
+        # Initiate differently with different types of averaged quantities
+        if type_ == 'scalar':
+            aver = 0
+        elif type_ == 'array in y':
+            aver = np.zeros(len(self.y))
+            
+        for i in tqdm(range(0, self.N)):
+            # The return value from formula should be of the same dimension with aver
+            sample = formula(self.fieldset[i].copy())
+            aver += sample
+        aver = aver / self.N
+        return aver
     
         
     # Function performed on averaged quantities
