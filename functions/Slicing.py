@@ -127,10 +127,10 @@ class Slicing:
         coord_slice.remove(direction)
         if not plotscatter:
             contour(field_slice, header, ax, domain = slice_domain, fieldmin = fixedrange[0], fieldmax = fixedrange[1], 
-                    coord=coord_slice, coordshow=True)
+                    coord=coord_slice, coordshow=False)
         else:
             scatter(field_slice, header, ax, domain = slice_domain, fieldmin = fixedrange[0], fieldmax = fixedrange[1], 
-                    coord=coord_slice, coordshow=True, area=dotsize)
+                    coord=coord_slice, coordshow=False, area=dotsize)
         
 
 # Functions that deals with multiple slicing

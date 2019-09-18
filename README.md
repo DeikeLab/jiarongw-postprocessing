@@ -10,3 +10,6 @@ sys.path.append('/home/jiarong/research/postprocessing/functions/')
 so that functions can be found. 
 
 Files with capital letter contains classes, while files with lowercase letter can be called without an instance.
+
+## ./each_project
+Where project specific jupyter notebooks are.
