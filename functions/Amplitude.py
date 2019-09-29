@@ -71,7 +71,7 @@ class Amplitude:
         ax.plot(self.spectrum[0][0:cutoff], abs(self.spectrum[1])[0:cutoff], 
             label = label_choice, color = color_choice)
         ax.set_xlabel('wavenumber')
-        ax.set_ylabel('|Y(Wavenumber)|')
+        ax.set_ylabel('Y(Wavenumber)')
 
         
     def phase(self):

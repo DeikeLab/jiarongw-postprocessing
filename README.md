@@ -12,4 +12,15 @@ so that functions can be found.
 Files with capital letter contains classes, while files with lowercase letter can be called without an instance.
 
 ## ./each_project
-Where project specific jupyter notebooks are.
+Where project specific jupyter notebooks are. Including ./windwave ./breaking and ./turbulence
+
+## ./media
+Scripts that deal with video converting etc.
+
+## ./doc
+Documentation generated with sphinx. To be added.
+
+
+## Old Folders
+./Matlab and ./Notebook
+Can be ignored.
