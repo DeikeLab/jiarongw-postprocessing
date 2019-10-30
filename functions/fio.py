@@ -7,7 +7,7 @@ import numpy as np
 import pickle
 from tqdm import tqdm
 
-def readin(filename, table_delimiter = ',', table_headers = None):
+def readin(filename, table_delimiter = ',', table_headers = None, skipn = None):
     '''
     A function used to read in field contained data file in the form of 
     dataframe. The warning of specifying dtype is to be ignored because of
@@ -22,7 +22,9 @@ def readin(filename, table_delimiter = ',', table_headers = None):
     table_delimiter: string, optional
         Either '' or ',', default ','
     table_headers: list of keys, optional
-        Names of the field attributes. Default is None.      
+        Names of the field attributes. Default is None.    
+    skipn : int, optional
+        Skip every skipn rows. Apply when the input data is too dense.
     '''
     
     # An implementation of droppping lines according to the return value of logic
@@ -38,7 +40,16 @@ def readin(filename, table_delimiter = ',', table_headers = None):
     if not exists:
         print(filename + ' cannot be read!')        
     if exists:
-        data = pd.read_table(filename, delimiter = table_delimiter, names = table_headers, error_bad_lines=False)
+        # Skip rows or not
+        if skipn!=None:   
+            def logic(index):
+                if index % skipn == 0:
+                   return False
+                return True
+            data = pd.read_table(filename, delimiter = table_delimiter, skiprows= lambda x: logic(x), error_bad_lines=False)
+        else:
+            data = pd.read_table(filename, delimiter = table_delimiter, names = table_headers, error_bad_lines=False)
+        # Convert to numerical
         columns = list(data) 
         for i in columns: 
             data[i] = pd.to_numeric(data[i],errors='coerce')

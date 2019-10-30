@@ -61,6 +61,8 @@ def contour(field, target, axes, fieldmin = None, fieldmax = None, domain = [-0.
     if coordshow:
         axes.set_xlabel(coord[0])
         axes.set_ylabel(coord[1])
+    # Return the image (optional)
+    return img 
 
 def scatter(field, target, axes, fieldmin = None, fieldmax = None, domain = [-0.5,0.5,-0.5,0.5], 
             coord = ['x','y'], coordshow = False, area = 100):
@@ -82,7 +84,8 @@ def series(grid):
         ncols = grid[1], nrows = grid[0]
     '''
     fig, ax = plt.subplots(ncols=grid[1], nrows=grid[0], figsize = [20, 40]) 
-    
+
+
 
 # A animation function that put different cases side by side in comparison
 def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, interval_time = 100):
@@ -118,8 +121,8 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
     def init():
         for j in range(0,n):
             img = mpimg.imread(path_set[j] + subpath +'-1.jpg')
-            imgplot.append(ax[j].imshow(img)) 
-        return imgplot
+            imgplot.append([ax[j].imshow(img)]) 
+        return imgplot,
 
     # animation function.  This is called sequentially
     def animate(i):
@@ -132,7 +135,8 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
             ax[j].get_xaxis().set_visible(False)
             ax[j].get_yaxis().set_visible(False)
             ax[j].text(20, 40, "t = %0.2f T" % (t*0.1/((2*3.14)**0.5)), fontsize = 20)
-        return imgplot
+        return imgplot, # for blitting to work it has to be a iterable object
+                        # https://stackoverflow.com/questions/35068396/matplotlib-funcanimation-error-when-blit-true
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
     anim = animation.FuncAnimation(fig, animate, init_func=init,
@@ -145,3 +149,27 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
     # http://matplotlib.sourceforge.net/api/animation_api.html
     # anim.save('./basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])    
     return anim
+
+
+
+
+# transparent=True makes the background of the saved figure transparent if the format supports it.
+# dpi=80 controls the resolution (dots per square inch) of the output.
+# bbox_inches="tight" fits the bounds of the figure to our plot.
+
+# fig.savefig('sales.png', transparent=False, dpi=80, bbox_inches="tight")
+
+# rc files
+# https://matplotlib.org/tutorials/introductory/customizing.html#sphx-glr-tutorials-introductory-customizing-py
+
+# https://matplotlib.org/3.1.0/gallery/misc/customize_rc.html
+# def set_pub():
+#     rc('font', weight='bold')    # bold fonts are easier to see
+#     rc('tick', labelsize=15)     # tick labels bigger
+#     rc('lines', lw=1, color='k') # thicker black lines
+#     rc('grid', c='0.5', ls='-', lw=0.5)  # solid gray grid lines
+#     rc('savefig', dpi=300)       # higher res outputs
+# set_pub()
+# ...
+# savefig('myfig')
+# rcdefaults()  # restore the defaults
