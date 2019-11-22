@@ -1,8 +1,34 @@
+## figure
+
+figure.figsize   : 20, 6   ## figure size in inches
+figure.dpi       : 1200        ## figure dots per inchfigsize : 6.4, 4.8
+
 axes.titlesize : 24
 axes.labelsize : 20
 lines.linewidth : 3
 lines.markersize : 10
 xtick.labelsize : 16
 ytick.labelsize : 16
-legend.fontsize : 18
+legend.fontsize : 20
+
+## Font
+#font.family         : serif
+#font.style          : normal
+#font.variant        : normal
+#font.weight         : normal
+#font.stretch        : normal
+## note that font.size controls default text sizes.  To configure
+## special text sizes tick labels, axes, labels, title, etc, see the rc
+## settings for axes and ticks. Special text sizes can be defined
+## relative to font.size, using the following values: xx-small, x-small,
+## small, medium, large, x-large, xx-large, larger, or smaller
+#font.size           : 10.0
+font.serif          : Palatino, DejaVu Serif, Bitstream Vera Serif, Computer Modern Roman, New Century Schoolbook, Century Schoolbook L, Utopia, ITC Bookman, Bookman, Nimbus Roman No9 L, Times New Roman, Times, Palatino, Charter, serif
+#font.sans-serif     : DejaVu Sans, Bitstream Vera Sans, Computer Modern Sans Serif, Lucida Grande, Verdana, Geneva, Lucid, Arial, Helvetica, Avant Garde, sans-serif
+#font.cursive        : Apple Chancery, Textile, Zapf Chancery, Sand, Script MT, Felipa, cursive
+#font.fantasy        : Comic Sans MS, Chicago, Charcoal, ImpactWestern, Humor Sans, xkcd, fantasy
+#font.monospace      : DejaVu Sans Mono, Bitstream Vera Sans Mono, Computer Modern Typewriter, Andale Mono, Nimbus Mono L, Courier New, Courier, Fixed, Terminal, monospace
+
+## Text
 text.usetex : True
+#text.latex.preamble : [r'\boldmath']

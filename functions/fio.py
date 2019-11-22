@@ -55,7 +55,9 @@ def readin(filename, table_delimiter = ',', table_headers = None, skipn = None):
             data[i] = pd.to_numeric(data[i],errors='coerce')
         data = data.dropna()
         data = data.reset_index(drop=True)
-        return data
+    else:
+        data = None
+    return data, exists
 
 def put_together(filename, core_number, table_delimiter = ',', table_headers = None):
     '''

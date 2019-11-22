@@ -43,3 +43,4 @@ ax.set_aspect('auto')
 ax.set_xlim([62, 538]) # For cropping the image
 ax.set_ylim([538, 62]) # Notice that the y is in reversed order because of the correspondence between the image coordinate and the numpy array coordinate
 ```
+
