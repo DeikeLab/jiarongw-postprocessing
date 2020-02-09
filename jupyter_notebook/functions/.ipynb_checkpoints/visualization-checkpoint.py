@@ -85,7 +85,53 @@ def series(grid):
     '''
     fig, ax = plt.subplots(ncols=grid[1], nrows=grid[0], figsize = [20, 40]) 
 
+# Single animation generation function
+def subplot_animation(animate_function, frame_number = 200, interval_time = 100):
+    '''
+    Animate a batch of jpg images. A grid can be specified for comparison betweeen different cases.
+    Slight modification to, e.g. the font size and text position, might be required for plotting different sized images.
+    
+    subpath: string
+        The subpath and the animation name(without frame number). For example '/test_animation/movie'.
+    frame_number: int, optional
+        The number of frame in total.
+    interval_time: int, optional 
+        The interval time between each frame in unit of micro second.
+    '''
 
+    # First set up the figure, the axis, and the plot element we want to animate
+    fig, ax = plt.figure(figsize = [15, 20])
+    imgplot = []
+        
+    # initialization function: plot the background of each frame
+    def init():
+        img = mpimg.imread(path_set[j] + subpath +'-1.jpg')
+        imgplot.append(ax.imshow(img)) 
+        return imgplot
+
+    # animation function.  This is called sequentially
+    def animate(i):
+        t = i
+        ax.clear()
+        img = mpimg.imread(path_set[j] + subpath + '-%g.jpg' % (t*2))
+        imgplot[j] = ax[j].imshow(img)
+        ax.set_title(title_set[j],fontsize = 20) 
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        ax.text(20, 40, "t = %0.2f T" % (t*0.1/((2*3.14)**0.5)), fontsize = 20)
+        return imgplot
+
+    # call the animator.  blit=True means only re-draw the parts that have changed.
+    anim = animation.FuncAnimation(fig, animate, init_func=init,
+                                   frames=frame_number, interval=interval_time, blit=True)
+
+    # save the animation as an mp4.  This requires ffmpeg or mencoder to be
+    # installed.  The extra_args ensure that the x264 codec is used, so that
+    # the video can be embedded in html5.  You may need to adjust this for
+    # your system: for more information, see
+    # http://matplotlib.sourceforge.net/api/animation_api.html
+    # anim.save('./basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])    
+    return anim
 
 # A animation function that put different cases side by side in comparison
 def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, interval_time = 100):
@@ -121,8 +167,8 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
     def init():
         for j in range(0,n):
             img = mpimg.imread(path_set[j] + subpath +'-1.jpg')
-            imgplot.append([ax[j].imshow(img)]) 
-        return imgplot,
+            imgplot.append(ax[j].imshow(img)) 
+        return imgplot
 
     # animation function.  This is called sequentially
     def animate(i):
@@ -135,8 +181,7 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
             ax[j].get_xaxis().set_visible(False)
             ax[j].get_yaxis().set_visible(False)
             ax[j].text(20, 40, "t = %0.2f T" % (t*0.1/((2*3.14)**0.5)), fontsize = 20)
-        return imgplot, # for blitting to work it has to be a iterable object
-                        # https://stackoverflow.com/questions/35068396/matplotlib-funcanimation-error-when-blit-true
+        return imgplot
 
     # call the animator.  blit=True means only re-draw the parts that have changed.
     anim = animation.FuncAnimation(fig, animate, init_func=init,
@@ -149,27 +194,3 @@ def subplot_animation(path_set, title_set, grid, subpath, frame_number = 200, in
     # http://matplotlib.sourceforge.net/api/animation_api.html
     # anim.save('./basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])    
     return anim
-
-
-
-
-# transparent=True makes the background of the saved figure transparent if the format supports it.
-# dpi=80 controls the resolution (dots per square inch) of the output.
-# bbox_inches="tight" fits the bounds of the figure to our plot.
-
-# fig.savefig('sales.png', transparent=False, dpi=80, bbox_inches="tight")
-
-# rc files
-# https://matplotlib.org/tutorials/introductory/customizing.html#sphx-glr-tutorials-introductory-customizing-py
-
-# https://matplotlib.org/3.1.0/gallery/misc/customize_rc.html
-# def set_pub():
-#     rc('font', weight='bold')    # bold fonts are easier to see
-#     rc('tick', labelsize=15)     # tick labels bigger
-#     rc('lines', lw=1, color='k') # thicker black lines
-#     rc('grid', c='0.5', ls='-', lw=0.5)  # solid gray grid lines
-#     rc('savefig', dpi=300)       # higher res outputs
-# set_pub()
-# ...
-# savefig('myfig')
-# rcdefaults()  # restore the defaults

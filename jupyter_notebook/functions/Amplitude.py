@@ -49,6 +49,9 @@ class Amplitude:
         self._eta_data = self._eta_data.sort_values(by = ['x'])
         self.eta = eta_data['eta'].values
         if np.any(self.eta): # prevent an all zero array as it happens sometimes
+            x_interp = np.linspace(0,1,1001)
+            self._eta_interp = np.interp(x_interp, self._eta_data.x, self._eta_data.eta)
+            self.stdev_interp = np.std(self._eta_interp)
             self.stdev = np.std(self.eta)
         else:
             self.stdev = 0                
