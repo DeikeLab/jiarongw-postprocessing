@@ -1,8 +1,0 @@
-filename="$1.ppm"
-output="$1.gif"
-targetname="$1.mpg"
-convert $filename $output
-mkdir movies
-ffmpeg -hide_banner -loglevel panic -i $output movies/fim_%05d.png
-ffmpeg -hide_banner -loglevel panic -i movies/fim_%05d.png -qscale 0 -filter:v "setpts=4*PTS" $targetname
-rm -r movies
