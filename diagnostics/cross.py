@@ -16,28 +16,20 @@ def main():
 	para_name = ['Ustar', 'ak', 'Bo', 'Re', 'LEVEL']
 	# para_pair_set = [(1,0.02,3.31,20000,11), (1,0.05,3.31,20000,11), (1,0.025,3.31,20000,11), (1,0.03,3.31,20000,11), (1,0.04,3.31,20000,11) ]
 	# para_pair_set = [(0.7,0.05,0.27,2990,11), (0.8,0.05,0.27,2990,11), (0.4,0.05,1.47,10600,11), (0.5,0.05,1.47,10600,11), (0.2,0.05,3.31,20000,11), (0.3,0.05,3.31,20000,11) ]
-<<<<<<< HEAD
-	para_pair_set = [(0.616,0.05,1.47,31000,11)]
-	# Assemble the directory name corresponding to each parameter set
-	for p in tqdm(para_pair_set):
-					# dirname = 'linear_m5B0'
-		dirname = 'linear_limited_secondrun_m5B0'
-=======
-	para_pair_set = [(0.6,0.05,200,100000,11)]
+
+	para_pair_set = [(0.4,0.05,200,100000,11), (1,0.05,200,100000,11)]
 	# Assemble the directory name corresponding to each parameter set
 	for p in tqdm(para_pair_set):
 					# dirname = 'linear_m5B0'
 		dirname = 'miscellaneous/linlog_adaptive_limited_m5B0'
->>>>>>> ebc30212a487a3a01316936f89a6e2b1a74b8c42
 		for i, name in enumerate(para_name):
 			if name == 'Re':
 				dirname += name + '%g' % p[i] + '.'
 			else:
 				dirname += name + '%g' % p[i]
-		# dirname = 'linear_plane_test2_Ustar0.5Bo3.45Re31000.LEVEL10'
 		# dirname += '_secondrun'
 		# Call iter_onecase, pass directory name as a parameter
-		subprocess.call(["cp", "./common/norun", './'+dirname])
+		subprocess.call(["cp", "/home/jiarong/research/postprocessing/diagnostics/norun", './'+dirname])
 		subprocess.call(['mkdir', './matrix'], cwd='/home/jiarong/research/projects/windwave/' + dirname, shell=False)
 		subprocess.call(['mkdir', './field'], cwd='/home/jiarong/research/projects/windwave/' + dirname, shell=False) 
 		for i in range(start, end):

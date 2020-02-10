@@ -64,8 +64,8 @@ void outfield (double time) {
     SDeform.y.x[] = SDeform.x.y[];
     SDeform.y.y[] = dvdy;
     double mu_eff = mu1*f[] + mu2*(1. - f[]); // compute effective viscosity
-    tau.x[] = 2*mu_eff*(SDeform.x.x[]*0 + SDeform.y.x[]*1);
-    tau.y[] = 2*mu_eff*(SDeform.x.y[]*0 + SDeform.y.y[]*1);
+    tau.x[] = 2*mu2*(SDeform.x.x[]*0 + SDeform.y.x[]*1);
+    tau.y[] = 2*mu2*(SDeform.x.y[]*0 + SDeform.y.y[]*1);
     fprintf (ffield, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", 
       x, y, u.x[], u.y[], f[], p[], p_air[], tau.x[], tau.y[], omega[], omega_air[]);
   }
@@ -102,8 +102,8 @@ void outfield (double time) {
       SDeform.y.y[] = dvdy;
       double mu_eff = mu2;  // compute effective viscosity
       // double mu_eff = mu1/rho[]*f[] + mu2/rho[]*(1. - f[]); 
-      tau.x[] = 2*mu_eff*(SDeform.x.x[]*n.x + SDeform.y.x[]*n.y)/norm_2;
-      tau.y[] = 2*mu_eff*(SDeform.x.y[]*n.x + SDeform.y.y[]*n.y)/norm_2;
+      tau.x[] = 2*mu2*(SDeform.x.x[]*n.x + SDeform.y.x[]*n.y)/norm_2;
+      tau.y[] = 2*mu2*(SDeform.x.y[]*n.x + SDeform.y.y[]*n.y)/norm_2;
       // double SDeformyz = 0.5*(dvdz + dwdy);
       // double SDeformzx = SDeformxz;
       // double SDeformzy = SDeformyz;
