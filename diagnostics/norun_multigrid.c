@@ -3,7 +3,11 @@
    Looping over dump files is achieved with a python script.
    The output files are field_direct+time, field_interp+time, eta+time  */
 
+<<<<<<< HEAD
 #include "grid/multigrid.h"
+=======
+// #include "grid/multigrid.h"
+>>>>>>> ebc30212a487a3a01316936f89a6e2b1a74b8c42
 #include "navier-stokes/centered.h"
 #include "two-phase.h"
 #include "navier-stokes/conserving.h"

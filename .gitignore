@@ -11,5 +11,10 @@ __pycache__/*
 */__pycache__/*
 .ipynb_checkpoints/*
 */.ipynb_checkpoints/*
+<<<<<<< HEAD
 *tex.cache*
 *perf*
+=======
+*/*/tex.cache/*
+*ensemble*
+>>>>>>> ebc30212a487a3a01316936f89a6e2b1a74b8c42
