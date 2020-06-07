@@ -48,13 +48,18 @@ class Amplitude:
         self._eta_data = eta_data.loc[(eta_data.f > tol) & ((1-eta_data.f) > tol)]
         self._eta_data = self._eta_data.sort_values(by = ['x'])
         self.eta = eta_data['eta'].values
+        self.x = eta_data['x'].values
+        # Compute slope
+#         self.slope = np.gradient(self.eta, self.x) 
+        # Some polyfit ...
         if np.any(self.eta): # prevent an all zero array as it happens sometimes
             x_interp = np.linspace(0,1,1001)
             self._eta_interp = np.interp(x_interp, self._eta_data.x, self._eta_data.eta)
             self.stdev_interp = np.std(self._eta_interp)
             self.stdev = np.std(self.eta)
         else:
-            self.stdev = 0                
+            self.stdev = 0        
+            self.stdev_interp = 0
     
     # A plotting function for amplitude profile
     # Use non-dimensionalized amplitude ak or not?
@@ -112,5 +117,7 @@ class Amplitude:
         Y = np.fft.fft(y)/N # fft computing and normalization
         Y = Y[0:int(N/2)]
         self.spectrum = (wavenumber, Y)
+    
+
 
 

@@ -12,6 +12,21 @@ import matplotlib.image as mpimg
 from matplotlib import animation
 import matplotlib.gridspec as gridspec
 
+# Generate a grid of 2*1 plots for contour and colorbar
+from mpl_toolkits.axes_grid1 import ImageGrid
+def contour_generator():
+    fig = plt.figure(figsize=(10,4))
+    grid = ImageGrid(fig, 111,          # as in plt.subplot(111)
+                     nrows_ncols=(1,1),
+                     axes_pad=0.15,
+                     share_all=True,
+                     cbar_location="right",
+                     cbar_mode="single",
+                     cbar_size="7%",
+                     cbar_pad=0.15,
+                     )
+    return fig,grid
+
 # A help function for displaying the colorbar
 def colorbar(mappable):
     ax = mappable.axes

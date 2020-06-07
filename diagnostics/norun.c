@@ -20,6 +20,7 @@
 #  define POPEN(name, mode) fopen (name ".ppm", mode)
 
 scalar p_air[];
+scalar omega[], omega_air[];
 
 /* Direct output on each grid point */
 void outfield (double time) {
@@ -49,7 +50,7 @@ void outfield (double time) {
   // direct output of 5 fields
   foreach()
   {
-	  double dudx = (u.x[1]     - u.x[-1]    )/(2.*Delta);
+	double dudx = (u.x[1]     - u.x[-1]    )/(2.*Delta);
     double dudy = (u.x[0,1]   - u.x[0,-1]  )/(2.*Delta);
     // double dudz = (u.x[0,0,1] - u.x[0,0,-1])/(2.*Delta);
     double dvdx = (u.y[1]     - u.y[-1]    )/(2.*Delta);
@@ -76,48 +77,48 @@ void outfield (double time) {
   sprintf (etaname, "./field/eta%g", time);
   FILE * feta = fopen (etaname, "w");
 
-  fprintf(feta, "x,pos,f,p,p_p1,p_p2,p_m1,p_m2,tau_x,tau_y,u_x,u_y,n_x,n_y\n");
+  // fprintf(feta, "x,pos,f,p,p_p2,p_p4,tau_x,tau_x_p2,tau_x_p4,tau_y,u_x,u_y,n_x,n_y\n");
+  fprintf(feta, "x,pos,f\n");
   // printing out quantities: p_p1 for p at plus 1, p_m1 for p at minus 1 etc.
   foreach(){
-    if (interfacial (point, f)){
+		if (interfacial (point, f)){
       // Getting the local normal vector
-      coord n = mycs (point, f);
-      double norm_2 = sqrt(sq(n.x) + sq(n.y));
+      // coord n = mycs (point, f);
+			//double norm_2 = sqrt(sq(n.x) + sq(n.y));
       // coord n2 = interface_normal (point, f);  
       // #define interface_normal(point, c) interface_normal (point, c) in src/contact.h
       // n is norm 1 and has to be normalized to norm 2
-      double dudx = (u.x[1]     - u.x[-1]    )/(2.*Delta);
-      double dudy = (u.x[0,1]   - u.x[0,-1]  )/(2.*Delta);
-      // double dudz = (u.x[0,0,1] - u.x[0,0,-1])/(2.*Delta);
-      double dvdx = (u.y[1]     - u.y[-1]    )/(2.*Delta);
-      double dvdy = (u.y[0,1]   - u.y[0,-1]  )/(2.*Delta);
-      // double dvdz = (u.y[0,0,1] - u.y[0,0,-1])/(2.*Delta);
-      // double dwdx = (u.z[1]     - u.z[-1]    )/(2.*Delta);
-      // double dwdy = (u.z[0,1]   - u.z[0,-1]  )/(2.*Delta);
-      // double dwdz = (u.z[0,0,1] - u.z[0,0,-1])/(2.*Delta);
-      SDeform.x.x[] = dudx;
-      SDeform.x.y[] = 0.5*(dudy + dvdx);
-      // double SDeformxz = 0.5*(dudz + dwdx);
-      SDeform.y.x[] = SDeform.x.y[];
-      SDeform.y.y[] = dvdy;
-      double mu_eff = mu2;  // compute effective viscosity
-      // double mu_eff = mu1/rho[]*f[] + mu2/rho[]*(1. - f[]); 
-      tau.x[] = 2*mu2*(SDeform.x.x[]*n.x + SDeform.y.x[]*n.y)/norm_2;
-      tau.y[] = 2*mu2*(SDeform.x.y[]*n.x + SDeform.y.y[]*n.y)/norm_2;
-      // double SDeformyz = 0.5*(dvdz + dwdy);
-      // double SDeformzx = SDeformxz;
-      // double SDeformzy = SDeformyz;
-      // double SDeformzz = dwdz; 
-      fprintf (feta, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", 
-        x, pos[], f[], p[], p[0,1], p[0,2], p[0,-1], p[0,-2], 
-        tau.x[], tau.y[], u.x[], u.y[], n.x/norm_2, n.y/norm_2);
+      /* double dudx = (u.x[1]     - u.x[-1]    )/(2.*Delta); */
+      /* double dudy = (u.x[0,1]   - u.x[0,-1]  )/(2.*Delta); */
+      /* // double dudz = (u.x[0,0,1] - u.x[0,0,-1])/(2.*Delta); */
+      /* double dvdx = (u.y[1]     - u.y[-1]    )/(2.*Delta); */
+      /* double dvdy = (u.y[0,1]   - u.y[0,-1]  )/(2.*Delta); */
+      /* // double dvdz = (u.y[0,0,1] - u.y[0,0,-1])/(2.*Delta); */
+      /* // double dwdx = (u.z[1]     - u.z[-1]    )/(2.*Delta); */
+      /* // double dwdy = (u.z[0,1]   - u.z[0,-1]  )/(2.*Delta); */
+      /* // double dwdz = (u.z[0,0,1] - u.z[0,0,-1])/(2.*Delta); */
+      /* SDeform.x.x[] = dudx; */
+      /* SDeform.x.y[] = 0.5*(dudy + dvdx); */
+      /* // double SDeformxz = 0.5*(dudz + dwdx); */
+      /* SDeform.y.x[] = SDeform.x.y[]; */
+      /* SDeform.y.y[] = dvdy; */
+      /* double mu_eff = mu2;  // compute effective viscosity */
+      /* // double mu_eff = mu1/rho[]*f[] + mu2/rho[]*(1. - f[]);  */
+      /* tau.x[] = 2*mu2*(SDeform.x.x[]*n.x + SDeform.y.x[]*n.y)/norm_2; */
+      /* tau.y[] = 2*mu2*(SDeform.x.y[]*n.x + SDeform.y.y[]*n.y)/norm_2; */
+      /* // double SDeformyz = 0.5*(dvdz + dwdy); */
+      /* // double SDeformzx = SDeformxz; */
+      /* // double SDeformzy = SDeformyz; */
+      /* // double SDeformzz = dwdz;  */
+      /* fprintf (feta, "%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g,%g\n", x, pos[], f[], p_air[], p_air[0,2], p_air[0,4], tau.x[], tau.x[0,2], tau.x[0,4], tau.y[], u.x[], u.y[], n.x/norm_2, n.y/norm_2); */
+			fprintf(feta, "%g,%g,%g\n", x, pos[], f[]);
     }
   }
   fclose (feta);
   // return 0;
-
+	fprintf(stderr, "Test line!\n");
   dump("dump", list = all);
-	
+
   char matrixname1[100], matrixname2[100], matrixname3[100];
   sprintf (matrixname1, "./matrix/f%g.dat", time);
   sprintf (matrixname2, "./matrix/p%g.dat", time);
@@ -128,7 +129,7 @@ void outfield (double time) {
   output_matrix (p_air, fp2, n = 512);
   FILE * fp3 = fopen (matrixname3, "w");  
   output_matrix (tau.x, fp3, n = 512);
-	fclose(fp1); fclose(fp2); fclose(fp3);
+  fclose(fp1); fclose(fp2); fclose(fp3);
 }
 
 /* Some info about the snapshot time and the refining criteria */
@@ -207,36 +208,38 @@ event init (i = 0)
 {
   char targetname[100], imagename[100];
   sprintf (targetname, "dump%g", snapshot_time);
-  if (!restore (targetname)) 
+  if (!restore (targetname)) {
   	fprintf(ferr, "Not restored!\n");
+  	return 1;
+  }
   restore (targetname);
   fprintf(ferr, "outfield_mid running!\n");
   outfield(snapshot_time);
-  scalar omega[], omega_air[];
-  vorticity (u, omega);
-  foreach()
-  {
-    omega_air[] = omega[]*(1-f[]);
-  }
-  squares("omega_air", min = -150, max = 150);
-  draw_vof("f");
-  sprintf (imagename, "omega%g", snapshot_time);
-  {
-    static FILE * fp = fopen (imagename, "w");
-    save (fp = fp);
-  }
-  sprintf (imagename, "ux%g", snapshot_time);
-  {
-    static FILE * fp = fopen (imagename, "w");
-    output_ppm (u.x, fp, n = 512);
-  }
+  // fprintf(ferr, "testline1!\n");
+  // view (width = 600, height = 600, fov = 18.8);
+  // squares("u.x");
+  // sprintf (imagename, "./movie/ux%g.ppm", snapshot_time);
+  // {
+  //   static FILE * fp = fopen (imagename, "w");
+  //   save (fp = fp);
+  // }
+  // clear();
+  // fprintf(ferr, "testline2!\n");
+  // squares("omega_air", min = -150, max = 150);
+  // draw_vof("f");
+  // sprintf (imagename, "./movie/omega%g.ppm", snapshot_time);
+  // {
+  //   static FILE * fp = POPEN ("./movie/omega", "a");
+  //   save (fp = fp);
+  // }
+  // fprintf(ferr, "testline3!\n");
   return 1;
 }
 
 
 
 event stop (t = snapshot_time + 200) {
-	fprintf(ferr, "end\n");
+  fprintf(ferr, "end\n");
   return 1;
 }
 
