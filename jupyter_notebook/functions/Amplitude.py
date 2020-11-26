@@ -33,7 +33,7 @@ class Amplitude:
             
     '''
     
-    def __init__(self, eta_data):
+    def __init__(self, eta_data, N = 512, L0 = 1):
         '''
         eta_data : dataframe
             A set of data containing the position x, interface elevation eta, and scalar fraction
@@ -53,9 +53,9 @@ class Amplitude:
 #         self.slope = np.gradient(self.eta, self.x) 
         # Some polyfit ...
         if np.any(self.eta): # prevent an all zero array as it happens sometimes
-            x_interp = np.linspace(0,1,1001)
-            self._eta_interp = np.interp(x_interp, self._eta_data.x, self._eta_data.eta)
-            self.stdev_interp = np.std(self._eta_interp)
+            self.x_interp = np.linspace(-L0/2,L0/2,N,endpoint=False)+L0/N/2
+            self.eta_interp = np.interp(self.x_interp, self._eta_data.x, self._eta_data.eta)
+            self.stdev_interp = np.std(self.eta_interp)
             self.stdev = np.std(self.eta)
         else:
             self.stdev = 0        

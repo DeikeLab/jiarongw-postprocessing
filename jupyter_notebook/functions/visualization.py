@@ -14,10 +14,10 @@ import matplotlib.gridspec as gridspec
 
 # Generate a grid of 2*1 plots for contour and colorbar
 from mpl_toolkits.axes_grid1 import ImageGrid
-def contour_generator():
+def contour_generator(nrows=1, ncols=1):
     fig = plt.figure(figsize=(10,4))
     grid = ImageGrid(fig, 111,          # as in plt.subplot(111)
-                     nrows_ncols=(1,1),
+                     nrows_ncols=(nrows,ncols),
                      axes_pad=0.15,
                      share_all=True,
                      cbar_location="right",
