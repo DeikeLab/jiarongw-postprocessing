@@ -1,0 +1,12 @@
+
+# J. Fluid Mech. figure style
+# textwidth = 32pc = 384pt = 5.31in = 134.96mm
+# pagewidth = 174mm = 6.85in
+font.size:      10
+text.usetex:        True
+font.family:    serif
+font.serif:     CMU serif
+axes.unicode_minus :False
+
+savefig.transparent: True
+#figure.figsize   : 5.2, 3.9 #ratio 4/3 based on JFM textwidth 32pc=384pt=5.313in

@@ -1,0 +1,10 @@
+# Phys. Rev. Letters figure style
+font.size:      10
+text.usetex:        True
+font.family:    serif
+font.serif:     Times New Roman
+#font.serif:     Arial
+axes.unicode_minus :False
+
+savefig.transparent: True
+figure.figsize   : 4.12, 3.09  #inches, ratio 4/3 based on width for 2 columns

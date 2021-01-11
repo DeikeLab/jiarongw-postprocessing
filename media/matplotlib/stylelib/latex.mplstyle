@@ -1,0 +1,8 @@
+# LaTeX export style, with serif Palatino font.
+font.size:      12
+#font.serif:     Palatino
+savefig.transparent: True
+
+text.usetex:        True
+font.family:    serif
+axes.unicode_minus :False

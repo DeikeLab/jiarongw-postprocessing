@@ -1,0 +1,9 @@
+## The maximum published width for a one-column figure is 3.37 inches (8.5 cm). The maximum width for a two-column figure is 6.69 inches (17 cm). The maximum depth of figures should be 8 ¼ in. (21.1 cm). Legends or labels within figures should be a minimum of 8-point type size (2.8 mm high; 1/8 in. high). A minimum of 0.5 point width for lines.
+
+# Figure properties
+figure.figsize: 4, 4
+figure.dpi: 600
+ 
+# Font properties
+font.family: Open Sans
+font.size: 8
