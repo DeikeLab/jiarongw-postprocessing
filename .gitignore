@@ -5,6 +5,9 @@
 *.dat
 *pickle*
 *~
+*.eps
+*.pdf
+*.pkl
 temp/
 matlab/
 __pycache__/*
@@ -14,6 +17,7 @@ __pycache__/*
 <<<<<<< HEAD
 *tex.cache*
 *perf*
+reference/*
 =======
 */*/tex.cache/*
 *ensemble*

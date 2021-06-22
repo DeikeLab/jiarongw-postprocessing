@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&lt;no title&gt; &#8212; Wind wave postprocessing  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <dl>
+<dt>{</dt><dd><dl>
+<dt>“cells”: [</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>“cell_type”: “code”,
+“execution_count”: 1,
+“metadata”: {},
+“outputs”: [],
+“source”: []</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“import pandas as pdn”,
+“import numpy as npn”,
+“from matplotlib import pyplot as pltn”,
+“from helper import fields, interface, fields_original, from_matrix, RealWaven”,
+“from fio import readinn”,
+“working_dir = ‘/home/jiarong/research/projects/windwave/rerun/’n”,
+“import matplotlib as mpln”,
+“from case import Casen”,
+“mpl.style.use(‘pof’)”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+{</p>
+<blockquote>
+<div><p>“cell_type”: “code”,
+“execution_count”: null,
+“metadata”: {},
+“outputs”: [],
+“source”: [</p>
+<blockquote>
+<div><p>“from scipy.interpolate import griddatan”,
+“import gcn”,
+“class Interface1D():n”,
+”    “”“Class for every interface related 1D output. Unstructured grid input.n”,
+”            n”,
+”    Attributes:n”,
+”        xarray: equal distanced x grid n”,
+”        &lt;field&gt;data: row data of &lt;field&gt;n”,
+”        &lt;field&gt;: interpolated data of &lt;field&gt;, including eta/p/grad/dudy/uxw…    n”,
+”    “”“n”,
+”     n”,
+”    def __init__(self, L0, N, path, t, PRUNING=True, pre=’/field/eta_loc_t’):n”,
+”        “”“Example of docstring on the __init__ method.n”,
+“n”,
+”        The __init__ method may be documented in either the class leveln”,
+”        docstring, or as a docstring on the __init__ method itself.n”,
+“n”,
+”        Either form is acceptable, but the two should not be mixed. Choose onen”,
+”        convention to document the __init__ method and be consistent with it.n”,
+“n”,
+”        Note:n”,
+”            Do not include the <cite>self</cite> parameter in the <code class="docutils literal notranslate"><span class="pre">Args</span></code> section.n”,
+“n”,
+”        Args:n”,
+”            L0, N: The desired output grid numbern”,
+”            working_dir: The case’s directoryn”,
+”            t: Time of this eta file.n”,
+”            PRUNING: If eta is output by multiple processes and have multiple headersn”,
+”                    (only applicable to MPI processed file).  n”,
+”            pre: the prefix of the desirable data file.n”,
+”        “”“n”,
+”        self.L0 = L0; self.N = N; self.t = tn”,
+”        self.xarray = np.linspace(-self.L0/2.,self.L0/2.,self.N,endpoint=False)+self.L0/2**self.N/2 # Centered grid for interpolationn”,
+”        filename = path + pre + ‘%g’ %self.tn”,
+”        snapshot = pd.read_table(filename, delimiter = ‘,’)n”,
+”        snapshot = snapshot.sort_values(by = [‘x’])n”,
+”        # Field entriesn”,
+”        # x,pos,epsilon,p,p_p1,p_p2,dudy1,dudy2,dvdx1,dvdx2,dudx1,dudx2,dvdy1,dvdy2,uxa,uya,uxw,uywn”,
+”        if PRUNING:n”,
+”            snapshot = snapshot[snapshot.x != ‘x’]n”,
+”            snapshot = snapshot.astype(‘float’)n”,
+”            snapshot = snapshot[snapshot.pos &lt; 0.4/(2*np.pi)] # Exclude data over slope 0.4n”,
+”            n”,
+”        self.xdata = np.array(snapshot.x, dtype=float)n”,
+”        self.etadata = np.array(snapshot.pos, dtype=float)n”,
+”        self.pdata = np.array(snapshot.p, dtype=float)n”,
+”        self.graddata = np.array(snapshot.epsilon, dtype=float)n”,
+”        self.dudydata = np.array(snapshot.dudy1, dtype=float)n”,
+”        self.dvdxdata = np.array(snapshot.dvdx1, dtype=float)n”,
+”        self.dudxdata = np.array(snapshot.dudx1, dtype=float)n”,
+”        self.dvdydata = np.array(snapshot.dvdy1, dtype=float)n”,
+”        self.uxwdata = np.array(snapshot.uxw, dtype=float)n”,
+”        self.uywdata = np.array(snapshot.uyw, dtype=float)n”,
+”        del (snapshot); gc.collect()  # Only necessary for 2D for memory issue              n”,
+”        n”,
+”        # Interpolate over x, ‘nearest’ is used to ensure that none of the interpolated point is ‘nan’ n”,
+”        self.eta = griddata(self.xdata.ravel(), self.etadata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.p = griddata(self.xdata.ravel(), self.pdata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.dudy = griddata(self.xdata.ravel(), self.dudydata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.dvdx = griddata(self.xdata.ravel(), self.dvdxdata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.dudx = griddata(self.xdata.ravel(), self.dudxdata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.dvdy = griddata(self.xdata.ravel(), self.dvdydata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.grad = griddata(self.xdata.ravel(), self.graddata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.uxw = griddata(self.xdata.ravel(), self.uxwdata.ravel(), self.xarray, method=’nearest’)n”,
+”        self.uyw = griddata(self.xdata.ravel(), self.uywdata.ravel(), self.xarray, method=’nearest’)n”,
+”    n”,
+”    def uwater(self,):n”,
+”        “”” Water velocity decomposition.n”,
+”            The arrays are:n”,
+”                uwx_smooth: smoothed direct output of uwn”,
+”                uwx_orbit: orbital velocity from direct output of eta, u component (simplest estimation)n”,
+”                uwy_orbit: orbital velocity from direct output of eta, v componentn”,
+”                ud: analytical time dependent drift, constant along xn”,
+”                uwx_analy: ud + uwx_orbitn”,
+”        “”“n”,
+“n”,
+”        plt.figure(figsize=[4,2])n”,
+”        from scipy.signal import hilbertn”,
+“n”,
+”        # Output water velocityn”,
+”        plt.plot(interface.xdata, interface.uxwdata, c=’C0’, alpha = 0.5) # Water velocity n”,
+”        plt.plot(interface.xdata, interface.uywdata, c=’C2’, alpha = 0.5) # Water velocity n”,
+”        uxw_smooth = butter_lowpass_filter(interface.uxw_tile, CUT=4)n”,
+”        uyw_smooth = butter_lowpass_filter(interface.uyw_tile, CUT=4)n”,
+”        plt.plot(interface.xarray, uxw_smooth, c=’C0’, label = ‘$u_s$, simu’) # Water velocity n”,
+”        plt.plot(interface.xarray, uyw_smooth, c=’C2’, label = ‘$v_s$, simu’) # Water velocity n”,
+“n”,
+”        # The analytical water velocityn”,
+”        # plt.plot(interface.xarray, interface.eta_tile*case.wave.c*2*np.pi) # The orbital velocityn”,
+”        from scipy.special import gamman”,
+”        t = 2n”,
+”        ud = t**0.5*gamma(1)/gamma(3/2)/850 * (case.ustar*case.wave.c)**2 * (2*np.pi/case.wave.omega/(1/case.Re))**0.5 # Drift according to theoretical solutionn”,
+”        eta = butter_lowpass_filter(interface.eta_tile, CUT=4) # Filter etan”,
+”        analytic_signal = hilbert(eta)n”,
+”        phase = np.unwrap(np.angle(analytic_signal))n”,
+”        uwx_orbit = eta*case.wave.c*2*np.pin”,
+”        uwy_orbit = eta*case.wave.c*2*np.pi/np.cos(phase)*np.cos(phase-np.pi/2)n”,
+”        uwx_analy = ud + uwx_orbitn”,
+“n”,
+”        plt.plot(interface.xarray, uwx_orbit, ‘–’, c=’C1’, label=’$u_w$, analy’, alpha = 0.5)n”,
+”        plt.plot(interface.xarray, uwy_orbit, ‘–’, c=’C2’, label=’$v_w$, analy’, alpha = 0.5)n”,
+”        plt.plot(interface.xarray, uwx_analy, ‘–’, c=’C0’, label = ‘$u_w$ + $u_d$, analy’)n”,
+“n”,
+”        plt.plot(interface.xarray, eta, c=’gray’, alpha = 0.5)n”,
+”        plt.xlabel(r’$x/\lambda$’)n”,
+”        plt.ylabel(r’$u_s,v_s$’)n”,
+”        plt.xlim([-0.5,0.5])n”,
+”        plt.ylim([-0.05,0.1])n”,
+”        plt.legend(bbox_to_anchor=(1.02, 0.5), loc = ‘center left’)n”,
+”    def vis”</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+“metadata”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“kernelspec”: {</dt><dd><p>“display_name”: “Python 3”,
+“language”: “python”,
+“name”: “python3”</p>
+</dd>
+</dl>
+<p>},
+“language_info”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“codemirror_mode”: {</dt><dd><p>“name”: “ipython”,
+“version”: 3</p>
+</dd>
+</dl>
+<p>},
+“file_extension”: “.py”,
+“mimetype”: “text/x-python”,
+“name”: “python”,
+“nbconvert_exporter”: “python”,
+“pygments_lexer”: “ipython3”,
+“version”: “3.7.3”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“nbformat”: 4,
+“nbformat_minor”: 2</p>
+</dd>
+</dl>
+<p>}</p>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Wind wave postprocessing</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">windwave</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#this-is-the-repository-for-postprocessing">This is the repository for postprocessing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Jiarong Wu.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Interface.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

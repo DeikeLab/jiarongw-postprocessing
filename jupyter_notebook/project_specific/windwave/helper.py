@@ -12,11 +12,11 @@ def from_matrix(pfile):
     return data
 
 def fields(common_path, time):
-    pfile = common_path + '/matrix/u%g.dat' %time
+    pfile = common_path + '/matrix/u%.7g.dat' %time
     u = from_matrix(pfile)
-    pfile = common_path + '/matrix/f%g.dat' %time
+    pfile = common_path + '/matrix/f%.7g.dat' %time
     f = from_matrix(pfile)
-    pfile = common_path + '/matrix/omega%g.dat' %time
+    pfile = common_path + '/matrix/omega%.7g.dat' %time
     omega = from_matrix(pfile)
     omega_air = omega*(1-f)
     omega_water = omega*f
@@ -25,11 +25,11 @@ def fields(common_path, time):
     return u_air, u_water, omega_air, omega_water
 
 def fields_original(common_path, time):
-    pfile = common_path + '/matrix/u%g.dat' %time
+    pfile = common_path + '/matrix/u%.7g.dat' %time
     u = from_matrix(pfile)
-    pfile = common_path + '/matrix/f%g.dat' %time
+    pfile = common_path + '/matrix/f%.7g.dat' %time
     f = from_matrix(pfile)
-    pfile = common_path + '/matrix/omega%g.dat' %time
+    pfile = common_path + '/matrix/omega%.7g.dat' %time
     omega = from_matrix(pfile)
     return u,f,omega
 
@@ -37,7 +37,7 @@ def draw_field(common_path, L0, field, time, ax, absmax=800):
     image = np.rot90(field)
 #     pcontour = ax.imshow(image, extent=(-L0/2,L0/2,-L0/2,L0/2), cmap='RdBu', vmax=absmax, vmin=-absmax)
     pcontour = ax.imshow(image, extent=(-0.5,0.5,-0.5,0.5), cmap='RdBu', vmax=absmax, vmin=-absmax)
-    etafile = common_path + '/field/eta%g' %time
+    etafile = common_path + '/field/eta%.7g' %time
     eta, exists = readin(etafile, table_delimiter = ',')
     if exists:
         eta.rename(columns={'pos':'eta'}, inplace=True)
@@ -47,7 +47,7 @@ def draw_field(common_path, L0, field, time, ax, absmax=800):
     return pcontour,pvof
 
 def interface(common_path, Npoint=512, L0=1, time=0):
-    etafile = common_path + '/field/eta%g' %time
+    etafile = common_path + '/field/eta%.7g' %time
     eta, exists = readin(etafile, table_delimiter = ',')
     if exists:
         eta.rename(columns={'pos':'eta'}, inplace=True)
