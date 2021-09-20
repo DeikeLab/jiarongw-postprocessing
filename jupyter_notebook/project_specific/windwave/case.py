@@ -102,8 +102,7 @@ class Case:
             self.t[i] = i/32
             if CAPI:
                 u_group = self.call_partition(i, CAPI=True)
-                self.pe_g[i], self.pe_s[i] = capi_energy(self.eta_filtered[i,:], self.rho1*self.g/(self.Bo*self.k**2), 
-                                                         g=self.g, L0=self.L0)
+                self.pe_g[i], self.pe_s[i] = capi_energy(self.eta_filtered[i,:], self.rho1*self.g/(self.Bo*self.k**2), g=self.g, L0=self.L0)
             else:
                 u_group = self.call_partition(i, CAPI=False)
                 self.pe_g[i] = np.std(self.eta_filtered[i,:])**2/2*self.g*self.L0
@@ -126,8 +125,7 @@ class Case:
             self.t[i] = i/32
             if CAPI:
                 u_group = self.call_partition(i, CAPI=True, FILTERING=False)
-                self.pe_g[i], self.pe_s[i] = capi_energy(self.eta_unfiltered[i,:], self.rho1*self.g/(self.Bo*self.k**2),
-                                                         g=self.g, L0=self.L0)
+                self.pe_g[i], self.pe_s[i] = capi_energy(self.eta_unfiltered[i,:], self.rho1*self.g/(self.Bo*self.k**2), g=self.g, L0=self.L0)
             else:
                 u_group = self.call_partition(i, CAPI=False, FILTERING=False)
                 self.pe_g[i] = np.std(self.eta_unfiltered[i,:])**2/2*self.g*self.L0

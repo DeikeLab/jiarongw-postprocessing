@@ -12,13 +12,14 @@ temp/
 matlab/
 __pycache__/*
 */__pycache__/*
+*/*/__pycache__/*
+*/*/*/__pycache__/*
 .ipynb_checkpoints/*
 */.ipynb_checkpoints/*
-<<<<<<< HEAD
+*/*/.ipynb_checkpoints/*
+*/*/*/.ipynb_checkpoints/*
 *tex.cache*
 *perf*
 reference/*
-=======
 */*/tex.cache/*
 *ensemble*
->>>>>>> ebc30212a487a3a01316936f89a6e2b1a74b8c42
