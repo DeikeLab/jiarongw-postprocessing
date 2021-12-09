@@ -1,6 +1,6 @@
 # Phys. Rev. Letters figure style
 font.size:      10
-text.usetex:        True
+#text.usetex:        True
 font.family:    serif
 font.serif:     Times New Roman
 #font.serif:     Arial
