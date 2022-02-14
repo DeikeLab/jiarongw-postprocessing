@@ -163,7 +163,7 @@ class Interface2D():
             snapshot = snapshot[snapshot.x != 'x']
             snapshot = snapshot.astype('float')
             snapshot = snapshot[snapshot.pos < 1 + 0.4/4] # Exclude data over slope 0.4
-            snapshot = snapshot[abs(snapshot.p-snapshot.p.mean()) < 10**(-2)] # Extra pruning for wild p
+            snapshot = snapshot[abs(snapshot.p-snapshot.p.mean()) < 10**(-1)] # Extra pruning for wild p
             snapshot = snapshot[np.isinf(snapshot.epsilon) == 0] # Gradient showing inf
             
         snapshot = snapshot.sort_values(by = ['x'])      
@@ -202,7 +202,7 @@ class Interface2D():
         # TODO: MAKE THIS 2D COMPATIBLE
         eta_1D = np.average(self.eta, axis=0)
         eta_1D_filtered = eta_1D-np.average(eta_1D)
-        # CAUTION: It seems like doing filtering will make the ohase inaccurate
+        # CAUTION: It seems like doing filtering will make the phase inaccurate
 #         eta_1D_filtered = self.__butter_lowpass_filter(eta_1D-np.average(eta_1D))
         analytic_signal = hilbert(eta_1D_filtered)
         self.phase = np.angle(analytic_signal)
