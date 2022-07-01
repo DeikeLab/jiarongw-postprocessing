@@ -24,7 +24,7 @@ class Case():
         self.path: Path of the case file
     """
     def __init__(self, ustar, Retau, Bo, g, ak, LEVEL, emax, alterMU=1., L0=2*np.pi, k=4., h=1., OUTLEVEL=8,
-                 working_dir='/home/jiarong/research/projects/turbulence/', prefix='curved_fixREtau_', 
+                 working_dir='/home/jiarong/research/projects/turbulence/', prefix='curved_fixREtau_', postfix='/', 
                  PRINTWAVE=False, NOMATCH=True, PRECURSOR=False):
         '''
         alterMU: the altered MU ratio. Default 1. Turn on NOMATCH as well.
@@ -37,7 +37,7 @@ class Case():
             self.L0 = L0; self.g = None; self.k = k; self.h = h
             self.rho1 = 1; self.rho2 = 1.225/1000.; self.sigma = None
             self.mu2 = self.ustar*self.rho2*(self.L0-h)/self.Retau; self.mu1 = self.mu2/(18.31e-6/10.0e-4)/alterMU
-            self.path = working_dir + prefix + 'REtau%g_ak%g_LEVEL%g_emax%g/' %(self.Retau,self.ak,self.LEVEL,self.emax) 
+            self.path = working_dir + prefix + 'REtau%g_ak%g_LEVEL%g_emax%g' %(self.Retau,self.ak,self.LEVEL,self.emax) + postfix
         else:   
             self.ustar = ustar; self.ak = ak; self.Bo = Bo; self.Retau = Retau; self.alterMU = alterMU
             self.emax=emax; self.LEVEL = LEVEL; self.N = 2**OUTLEVEL
@@ -45,9 +45,9 @@ class Case():
             self.rho1 = 1; self.rho2 = 1.225/1000.; self.sigma = self.g/(self.Bo*self.k**2)
             self.mu2 = self.ustar*self.rho2*(self.L0-h)/self.Retau; self.mu1 = self.mu2/(18.31e-6/10.0e-4)/alterMU
             if NOMATCH == True:
-                self.path = working_dir + prefix + 'REtau%g_BO%g_g%g_ak%g_MU%g_LEVEL%g_emax%g/' %(self.Retau,self.Bo,self.g,self.ak,self.alterMU,self.LEVEL,self.emax) 
+                self.path = working_dir + prefix + 'REtau%g_BO%g_g%g_ak%g_MU%g_LEVEL%g_emax%g' %(self.Retau,self.Bo,self.g,self.ak,self.alterMU,self.LEVEL,self.emax) + postfix
             else:
-                self.path = working_dir + prefix + 'REtau%g_BO%g_g%g_ak%g_LEVEL%g_emax%g/' %(self.Retau,self.Bo,self.g,self.ak,self.LEVEL,self.emax) 
+                self.path = working_dir + prefix + 'REtau%g_BO%g_g%g_ak%g_LEVEL%g_emax%g' %(self.Retau,self.Bo,self.g,self.ak,self.LEVEL,self.emax) + postfix
             # Run wave helper function to compute wave related info0
             # Notice that this depends on the definition of the wave in the specific set of cases
             self.wave = RealWave(g=self.g, sigma=self.sigma, rho=self.rho1, rho_air=self.rho2, mu = self.mu1, mu_air = self.mu2)
@@ -126,7 +126,7 @@ class Interface2D():
         <field>: interpolated data of <field>, including eta/p/grad/dudy/uxw...    
     """
      
-    def __init__(self, L0, N, path, t, PRUNING=True, pre='field/eta_loc_t', filename=None):
+    def __init__(self, L0, N, path, t, PRUNING=True, pruningz=1+0.4/4., pre='field/eta_loc_t', filename=None):
         """Example of docstring on the __init__ method.
 
         The __init__ method may be documented in either the class level
@@ -144,6 +144,7 @@ class Interface2D():
             t: Time of this eta file.
             PRUNING: If eta is output by multiple processes and have multiple headers
                     (only applicable to MPI processed file).  
+            pruningz: the height above which the points are discarded
             pre: the prefix of the desirable data file.
             filename: directly give filename instead of creat based on time
         """
@@ -162,7 +163,8 @@ class Interface2D():
         if PRUNING:
             snapshot = snapshot[snapshot.x != 'x']
             snapshot = snapshot.astype('float')
-            snapshot = snapshot[snapshot.pos < 1 + 0.4/4] # Exclude data over slope 0.4
+            print('Pruning points above %g!' %pruningz)
+            snapshot = snapshot[snapshot.pos < pruningz] # Exclude data over slope 0.4
             snapshot = snapshot[abs(snapshot.p-snapshot.p.mean()) < 10**(-1)] # Extra pruning for wild p
             snapshot = snapshot[np.isinf(snapshot.epsilon) == 0] # Gradient showing inf
             

@@ -2,6 +2,7 @@
 # J. Fluid Mech. figure style
 # textwidth = 32pc = 384pt = 5.31in = 134.96mm
 # pagewidth = 174mm = 6.85in
+
 font.size:      10
 # Could not make latex work on tigeressdata, therefore changing only the default font of dejavu
 mathtext.fontset:    stix
@@ -13,4 +14,8 @@ axes.unicode_minus :False
 
 savefig.transparent: True
 figure.dpi: 600
-#figure.figsize   : 5.2, 3.9 #ratio 4/3 based on JFM textwidth 32pc=384pt=5.313in
+figure.figsize: 5.2, 3.9  #ratio 4/3 based on JFM textwidth 32pc=384pt=5.313in
+
+axes.linewidth: 0.5
+xtick.major.width: 0.5
+ytick.major.width: 0.5

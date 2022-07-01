@@ -8,6 +8,7 @@
 *.eps
 *.pdf
 *.pkl
+*.tiff
 temp/
 matlab/
 __pycache__/*
@@ -25,3 +26,8 @@ reference/*
 *ensemble*
 *.csv
 *.zip
+*.xlsx
+*.vts
+jupyter_notebook/project_specific/turbulence/pycurrents_20211220/*
+jupyter_notebook/project_specific/turbulence/pycurrents/*
+media/matplotlib/tex.cache/*

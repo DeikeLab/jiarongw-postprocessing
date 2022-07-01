@@ -2,7 +2,7 @@
 
 # Figure properties
 figure.figsize: 4, 4
-figure.dpi: 600
+figure.dpi: 400
  
 # Font properties
 font.family: Open Sans

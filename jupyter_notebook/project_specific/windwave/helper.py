@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import sys
-sys.path.append('/home/jiarong/research/postprocessing/jupyter_notebook/functions/')
+sys.path.append('../../functions/')
 from fio import readin
 from Amplitude import Amplitude
 

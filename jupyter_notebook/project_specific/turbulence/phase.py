@@ -16,7 +16,7 @@ def create_new_phase(case, tsimu, PRE=False, ADDITIVE=False, phase_old=None):
     # Stationary waves. All the same phase.
     if PRE == True:
         interface = Interface2D(L0 = case.L0, N = case.N, 
-                                path = case.path, t=None, PRUNING=True, filename=case.path+'eta/eta_pre') 
+                                path = case.path, t=None, PRUNING=True, pruningz=case.h+0.4/case.k, filename=case.path+'eta/eta_pre') 
         for (j,t) in enumerate(tsimu):
             case.phase['t'].append(t-case.tstart)
             case.phase['idx'].append(0)  
@@ -38,7 +38,7 @@ def create_new_phase(case, tsimu, PRE=False, ADDITIVE=False, phase_old=None):
                 else:
                     print ('Additional t = %g' %t)
                     interface = Interface2D(L0 = case.L0, N = case.N, 
-                                            path = case.path, pre='eta/eta_loc_t', t = t, PRUNING=True)    
+                                            path = case.path, pre='eta/eta_loc_t', t = t, PRUNING=True, pruningz=case.h+0.4/case.k)    
                     # TODO: append other field in interface too
                     case.phase['idx'].append(interface.idx)
                     idx_theo = int(round(case.wave.c*(t-case.tstart)/(2*np.pi/case.k)*int(case.N/case.k)) % int(case.N/case.k))
@@ -49,7 +49,7 @@ def create_new_phase(case, tsimu, PRE=False, ADDITIVE=False, phase_old=None):
             for (j,t) in tqdm(enumerate(tsimu)):
                 case.phase['t'].append(t-case.tstart)
                 interface = Interface2D(L0 = case.L0, N = case.N, 
-                                        path = case.path, pre='eta/eta_loc_t', t = t, PRUNING=True)    
+                                        path = case.path, pre='eta/eta_loc_t', t = t, PRUNING=True, pruningz=case.h+0.4/case.k)    
                 case.phase['idx'].append(interface.idx)
                 idx_theo = int(round(case.wave.c*(t-case.tstart)/(2*np.pi/case.k)*int(case.N/case.k)) % int(case.N/case.k))
                 case.phase['idx_theo'].append(idx_theo)
