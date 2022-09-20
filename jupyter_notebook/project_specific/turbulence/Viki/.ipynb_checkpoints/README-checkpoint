@@ -1,0 +1,10 @@
+This folder contains 20 snapshots of water surface, wind velocity, and pressure data from the wind wave simulation.
+The velocities are in the lab frame of reference. To transform into the wave frame of reference one can simply subtract 1.00249 from all the u data and keep v the same.
+
+In the illustration plot:
+The color is showing the v component of the velocity.
+The black line is the water surface.
+The velocities (u,v) are sampled at the dashed line, about 1/8 wave length from the mean water surface.
+The pressure is sampled at the dotted line.
+
+Not important (yet) context information about the simulation: wave age c/u_* = 4. 
