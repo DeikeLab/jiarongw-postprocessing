@@ -25,6 +25,7 @@ reference/*
 */*/tex.cache/*
 *ensemble*
 *.csv
+*.txt
 *.zip
 *.xlsx
 *.vts

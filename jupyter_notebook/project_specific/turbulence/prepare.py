@@ -20,7 +20,8 @@ def load_object(filename):
 
 """ Helper functions (readin): 
     For the case objects, with already specified self.field_t, read in fields and store as 
-    spanwise averaged time sequence of 2D array 
+    spanwise averaged time sequence of 2D array. If the pickle is available, read in the pickle;
+    if not, store the pickle. (NOTICE: need to have a sub-directory of pickle_tiger/ first!)
     Output: case.ux_2D, case.uy_2D, case.f_2D (dimension time*x*z)                   
 """
 def read_fields (case):

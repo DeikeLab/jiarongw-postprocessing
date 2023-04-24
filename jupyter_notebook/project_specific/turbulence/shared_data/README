@@ -1,0 +1,4 @@
+For all three cases: wall friction velocity u* = 0.25, wall unit delta_nu = 0.00734.
+CU2: c/u* = 2, omega = 2.005.
+CU4: c/u* = 4, omega = 4.010.
+CU8: c/u* = 8, omega = 8.020.
